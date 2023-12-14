@@ -1,0 +1,24 @@
+project_name: etf2l
+
+env_files:
+  github_token: .github_releaser_token
+
+builds:
+  - skip: true
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+
+release:
+  github:
+    owner: leighmacdonald
+    name: etf2l
+  draft: true
+  replace_existing_draft: true
+  prerelease: auto
+
+changelog:
+  use: github-native
