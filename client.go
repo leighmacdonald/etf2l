@@ -19,12 +19,6 @@ const (
 )
 
 var (
-	BuildVersion = "master" //nolint:gochecknoglobals
-	BuildCommit  = ""       //nolint:gochecknoglobals
-	BuildDate    = ""       //nolint:gochecknoglobals
-)
-
-var (
 	ErrNotFound = errors.New("Not found (404)")
 	ErrEOF      = errors.New("End of results")
 )
