@@ -11,7 +11,7 @@ import (
 
 const (
 	testIDBanned      steamid.SID64 = "76561198203516436"
-	testETF2LBannedID               = 139491
+	testETF2LBannedID int           = 139491
 )
 
 func TestClient(t *testing.T) {
