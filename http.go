@@ -5,11 +5,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/pkg/errors"
-	"golang.org/x/time/rate"
 	"io"
 	"net/http"
 	"time"
+
+	"github.com/pkg/errors"
+	"golang.org/x/time/rate"
 )
 
 const (
@@ -18,8 +19,28 @@ const (
 )
 
 var (
-	ErrNotFound = errors.New("Not found (404)")
+	BuildVersion = "master" //nolint:gochecknoglobals
+	BuildCommit  = ""       //nolint:gochecknoglobals
+	BuildDate    = ""       //nolint:gochecknoglobals
 )
+
+var (
+	ErrNotFound = errors.New("Not found (404)")
+	ErrEOF      = errors.New("End of results")
+)
+
+type Recursive interface {
+	IsRecursive() bool
+}
+
+type PagedResult interface {
+	NextURL(r Recursive) (string, error)
+}
+
+type Status struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+}
 
 type LimiterClient struct {
 	*http.Client
@@ -58,7 +79,7 @@ func New() *Client {
 	return &Client{LimiterClient: newHTTPClient()}
 }
 
-func (client *Client) call(ctx context.Context, method string, path string, body any, receiver any) error {
+func (client *Client) call(ctx context.Context, path string, body any, receiver any) error {
 	var reqBody io.Reader
 
 	if body != nil {
@@ -70,7 +91,7 @@ func (client *Client) call(ctx context.Context, method string, path string, body
 		reqBody = bytes.NewReader(rb)
 	}
 
-	req, errReq := http.NewRequestWithContext(ctx, method, fullURL(path), reqBody)
+	req, errReq := http.NewRequestWithContext(ctx, http.MethodGet, fullURL(path), reqBody)
 	if errReq != nil {
 		return errors.Wrap(errReq, "Failed to create request")
 	}

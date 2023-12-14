@@ -2,10 +2,9 @@ package etf2l
 
 import (
 	"context"
-	"net/http"
 )
 
-type WhitelistsResponse struct {
+type whitelistsResponse struct {
 	Status     Status               `json:"status"`
 	Whitelists map[string]Whitelist `json:"whitelists"`
 }
@@ -13,12 +12,12 @@ type WhitelistsResponse struct {
 type Whitelist struct {
 	Filename   string `json:"filename"`
 	LastChange int    `json:"last_change"`
-	Url        string `json:"url"`
+	URL        string `json:"url"`
 }
 
 func (client *Client) Whitelists(ctx context.Context) (map[string]Whitelist, error) {
-	var resp WhitelistsResponse
-	if err := client.call(ctx, http.MethodGet, "/whitelists", nil, &resp); err != nil {
+	var resp whitelistsResponse
+	if err := client.call(ctx, "/whitelists", nil, &resp); err != nil {
 		return nil, err
 	}
 
