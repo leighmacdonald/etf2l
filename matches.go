@@ -83,17 +83,17 @@ func (resp matchesResponse) NextURL(r Recursive) (string, error) {
 
 type MatchesOpts struct {
 	BaseOpts
-	Clan1       int      `json:"clan1,omitempty"`       // Team ID of the blu team.
-	Clan2       int      `json:"clan2,omitempty"`       // Team ID of the red team.
-	Vs          int      `json:"vs,omitempty"`          // Team ID of either team.
-	Scheduled   int      `json:"scheduled,omitempty"`   // If set to 1, returns matches that have yet to be played. If set to 0, returns matches that are over.
-	Competition int      `json:"competition,omitempty"` // Limit your search to a specific competition. Expects a competition ID.
-	From        int      `json:"from,omitempty"`        // UNIX timestamp that limits results to everything after the timestamp.
-	To          int      `json:"to,omitempty"`          // UNIX timestamp that limits results to everything before the time.
-	Division    string   `json:"division,omitempty"`    // Name of the division in which the competition was played.
-	TeamType    string   `json:"team_type,omitempty"`   // Name of the type of team.
-	Round       string   `json:"round,omitempty"`       // Name of the current round.
-	Players     []string `json:"players,omitempty"`     // A list of ETF2L user ID's. Returns only matches in which any of the provided players participated.
+	Clan1       int      `url:"clan1,omitempty"`       // Team ID of the blu team.
+	Clan2       int      `url:"clan2,omitempty"`       // Team ID of the red team.
+	Vs          int      `url:"vs,omitempty"`          // Team ID of either team.
+	Scheduled   int      `url:"scheduled,omitempty"`   // If set to 1, returns matches that have yet to be played. If set to 0, returns matches that are over.
+	Competition int      `url:"competition,omitempty"` // Limit your search to a specific competition. Expects a competition ID.
+	From        int      `url:"from,omitempty"`        // UNIX timestamp that limits results to everything after the timestamp.
+	To          int      `url:"to,omitempty"`          // UNIX timestamp that limits results to everything before the time.
+	Division    string   `url:"division,omitempty"`    // Name of the division in which the competition was played.
+	TeamType    string   `url:"team_type,omitempty"`   // Name of the type of team.
+	Round       string   `url:"round,omitempty"`       // Name of the current round.
+	Players     []string `url:"players,omitempty"`     // A list of ETF2L user ID's. Returns only matches in which any of the provided players participated.
 }
 
 func (client *Client) Matches(ctx context.Context, opts Recursive) ([]Match, error) {

@@ -64,13 +64,13 @@ const (
 
 type CompetitionOpts struct {
 	Recursive
-	Archived    ArchivedState `json:"archived,omitempty"` // 1 Returns only archived competitions, 0 returns non-archived competitions.
-	Name        string        `json:"name,omitempty"`
-	Description string        `json:"description,omitempty"`
-	Category    string        `json:"category,omitempty"`
-	CompType    string        `json:"comp_type,omitempty"`
-	TeamType    string        `json:"team_type,omitempty"`
-	Competition string        `json:"competition,omitempty"`
+	Archived    ArchivedState `url:"archived,omitempty"` // 1 Returns only archived competitions, 0 returns non-archived competitions.
+	Name        string        `url:"name,omitempty"`
+	Description string        `url:"description,omitempty"`
+	Category    string        `url:"category,omitempty"`
+	CompType    string        `url:"comp_type,omitempty"`
+	TeamType    string        `url:"team_type,omitempty"`
+	Competition string        `url:"competition,omitempty"`
 }
 
 func (client *Client) CompetitionList(ctx context.Context, opts Recursive) ([]Competition, error) {

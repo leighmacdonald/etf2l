@@ -2,6 +2,7 @@ package etf2l
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/leighmacdonald/steamid/v3/steamid"
@@ -64,16 +65,35 @@ type URLs struct {
 	Transfers string `json:"transfers"`
 }
 
+type PlayerClasses struct {
+	Classes []string
+}
+
+func (f *PlayerClasses) UnmarshalJSON(data []byte) error {
+	var value any
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	switch value.(type) {
+	case nil, bool:
+		f.Classes = []string{}
+	default:
+		f.Classes = value.([]string)
+	}
+
+	return nil
+}
+
 type Player struct {
-	Bans       []BanReason  `json:"bans"`
-	Classes    []string     `json:"classes"`
-	Country    string       `json:"country"`
-	ID         int          `json:"id"`
-	Name       string       `json:"name"`
-	Registered int          `json:"registered"`
-	Steam      SteamPlayer  `json:"steam"`
-	Teams      []PlayerTeam `json:"teams"`
-	Title      string       `json:"title"`
+	Bans       []BanReason   `json:"bans"`
+	Classes    PlayerClasses `json:"classes"`
+	Country    string        `json:"country"`
+	ID         int           `json:"id"`
+	Name       string        `json:"name"`
+	Registered int           `json:"registered"`
+	Steam      SteamPlayer   `json:"steam"`
+	Teams      []PlayerTeam  `json:"teams"`
+	Title      string        `json:"title"`
 	Urls       struct {
 		Results   string `json:"results"`
 		Self      string `json:"self"`
@@ -162,7 +182,7 @@ func (resp pagedPlayerResults) NextURL(r Recursive) (string, error) {
 }
 
 type BaseOpts struct {
-	Recursive bool
+	Recursive bool `url:"-"`
 }
 
 func (opts BaseOpts) IsRecursive() bool {

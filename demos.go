@@ -58,11 +58,11 @@ func (resp demosResponse) NextURL(r Recursive) (string, error) {
 
 type DemoOpts struct {
 	Recursive
-	PlayerID string   `json:"player,omitempty"`
-	Type     []string `json:"type,omitempty"` // stv, first_person
-	Pruned   bool     `json:"pruned,omitempty"`
-	From     int      `json:"from,omitempty"` // unixtime start
-	To       int      `json:"to,omitempty"`   // unixtime end
+	PlayerID string   `url:"player,omitempty"`
+	Type     []string `url:"type,omitempty"` // stv, first_person
+	Pruned   bool     `url:"pruned,omitempty"`
+	From     int      `url:"from,omitempty"` // unixtime start
+	To       int      `url:"to,omitempty"`   // unixtime end
 }
 
 func getPath(path string) (string, error) {

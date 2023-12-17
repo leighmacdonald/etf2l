@@ -12,7 +12,7 @@ type RecruitmentComments struct {
 }
 
 type PlayerRecruitment struct {
-	Classes  []string            `json:"classes"`
+	Classes  PlayerClasses       `json:"classes"`
 	Comments RecruitmentComments `json:"comments"`
 	ID       int                 `json:"id"`
 	Name     string              `json:"name"`
@@ -62,17 +62,17 @@ func (resp playerRecruitmentResp) NextURL(r Recursive) (string, error) {
 type RecruitmentOpts struct {
 	BaseOpts
 	// Returns only recruitment posts of a specific country.
-	Country string `json:"country,omitempty"`
+	Country string `url:"country,omitempty"`
 	// Returns only recruitment posts of a specific class. Can be provided as string or as a list.
 	// In order to search for multiple classes, provide the argument in an array/list format.
-	Class []string `json:"class,omitempty"`
+	Class []string `url:"class,omitempty"`
 	// Returns only recruitment posts for a certain skill level. Can be provided as string or as a list.
 	// In order to search for multiple skill levels, provide the argument in an array/list format.
-	Skill []string `json:"skill,omitempty"`
+	Skill []string `url:"skill,omitempty"`
 	// Limit recruitment posts by team type.
-	Type string `json:"type,omitempty"`
+	Type string `url:"type,omitempty"`
 	// Limit recruitment posts by ETF2L user id. Is the creator of the post.
-	User int `json:"user,omitempty"`
+	User int `url:"user,omitempty"`
 }
 
 func (client *Client) PlayerRecruitment(ctx context.Context, opts RecruitmentOpts) ([]PlayerRecruitment, error) {
@@ -104,7 +104,7 @@ func (client *Client) PlayerRecruitment(ctx context.Context, opts RecruitmentOpt
 }
 
 type TeamRecruitment struct {
-	Classes  []string            `json:"classes"`
+	Classes  PlayerClasses       `json:"classes"`
 	Comments RecruitmentComments `json:"comments"`
 	ID       int                 `json:"id"`
 	Name     string              `json:"name"`

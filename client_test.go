@@ -10,6 +10,7 @@ import (
 )
 
 const (
+	testIDb4nny       steamid.SID64 = "76561197970669109"
 	testIDBanned      steamid.SID64 = "76561198203516436"
 	testETF2LBannedID int           = 139491
 )
@@ -41,9 +42,9 @@ func TestClient(t *testing.T) {
 
 func testPlayer(client *etf2l.Client) func(*testing.T) {
 	return func(t *testing.T) {
-		p1, err := client.Player(context.Background(), testIDBanned.String())
+		p1, err := client.Player(context.Background(), testIDb4nny.String())
 		require.NoError(t, err)
-		require.Equal(t, testETF2LBannedID, p1.ID)
+		require.Equal(t, 20834, p1.ID)
 
 		_, err404 := client.Player(context.Background(), "7999198203516436")
 		require.ErrorIs(t, etf2l.ErrNotFound, err404)

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/pkg/errors"
@@ -67,6 +68,7 @@ func fullURL(path string) string {
 
 type Client struct {
 	*LimiterClient
+	sync.RWMutex
 }
 
 func New() *Client {
@@ -74,6 +76,9 @@ func New() *Client {
 }
 
 func (client *Client) call(ctx context.Context, path string, body any, receiver any) error {
+	client.Lock()
+	defer client.Unlock()
+
 	var reqBody io.Reader
 
 	if body != nil {

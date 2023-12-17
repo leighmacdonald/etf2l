@@ -53,9 +53,9 @@ func (resp bansResponse) NextURL(r Recursive) (string, error) {
 
 type BanOpts struct {
 	Recursive
-	PlayerID int    `json:"player,omitempty"` // etf2l player id only, no steamid
-	Status   string `json:"status,omitempty"` // 'active' or 'expired'
-	Reason   string `json:"reason,omitempty"` // 'VAC`
+	PlayerID int    `url:"player,omitempty"` // etf2l player id only, no steamid
+	Status   string `url:"status,omitempty"` // 'active' or 'expired'
+	Reason   string `url:"reason,omitempty"` // 'VAC`
 }
 
 func (client *Client) Bans(ctx context.Context, opts BanOpts) ([]Ban, error) {
@@ -65,7 +65,7 @@ func (client *Client) Bans(ctx context.Context, opts BanOpts) ([]Ban, error) {
 
 	for {
 		var resp bansResponse
-		if err := client.call(ctx, curPath, nil, &resp); err != nil {
+		if err := client.call(ctx, curPath, opts, &resp); err != nil {
 			return nil, err
 		}
 
