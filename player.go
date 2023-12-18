@@ -65,20 +65,19 @@ type URLs struct {
 	Transfers string `json:"transfers"`
 }
 
-type PlayerClasses struct {
-	Classes []string
-}
+type PlayerClasses []string
 
 func (f *PlayerClasses) UnmarshalJSON(data []byte) error {
 	var value any
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
+
 	switch value.(type) {
 	case nil, bool:
-		f.Classes = []string{}
+		*f = []string{}
 	default:
-		f.Classes = value.([]string)
+		*f = value.([]string)
 	}
 
 	return nil
