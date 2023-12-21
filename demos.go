@@ -2,6 +2,7 @@ package etf2l
 
 import (
 	"context"
+	"net/http"
 	"net/url"
 
 	"github.com/pkg/errors"
@@ -74,14 +75,14 @@ func getPath(path string) (string, error) {
 	return parsed.Path + "?" + parsed.RawQuery, nil
 }
 
-func (client *Client) Demos(ctx context.Context, opts Recursive) ([]Demo, error) {
+func (client *Client) Demos(ctx context.Context, httpClient *http.Client, opts Recursive) ([]Demo, error) {
 	var demos []Demo
 
 	curPath := "/demos"
 
 	for {
 		var resp demosResponse
-		if err := client.call(ctx, curPath, opts, &resp); err != nil {
+		if err := client.call(ctx, httpClient, curPath, opts, &resp); err != nil {
 			return nil, err
 		}
 

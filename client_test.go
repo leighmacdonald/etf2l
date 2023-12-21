@@ -2,6 +2,7 @@ package etf2l_test
 
 import (
 	"context"
+	"net/http"
 	"testing"
 
 	"github.com/leighmacdonald/etf2l"
@@ -42,18 +43,18 @@ func TestClient(t *testing.T) {
 
 func testPlayer(client *etf2l.Client) func(*testing.T) {
 	return func(t *testing.T) {
-		p1, err := client.Player(context.Background(), testIDb4nny.String())
+		p1, err := client.Player(context.Background(), &http.Client{}, testIDb4nny.String())
 		require.NoError(t, err)
 		require.Equal(t, 20834, p1.ID)
 
-		_, err404 := client.Player(context.Background(), "7999198203516436")
+		_, err404 := client.Player(context.Background(), &http.Client{}, "7999198203516436")
 		require.ErrorIs(t, etf2l.ErrNotFound, err404)
 	}
 }
 
 func testPlayerResults(client *etf2l.Client) func(*testing.T) {
 	return func(t *testing.T) {
-		results, err := client.PlayerResults(context.Background(), testIDBanned.String(), etf2l.BaseOpts{Recursive: false})
+		results, err := client.PlayerResults(context.Background(), &http.Client{}, testIDBanned.String(), etf2l.BaseOpts{Recursive: false})
 		require.NoError(t, err)
 		require.Equal(t, 20, len(results))
 	}
@@ -61,7 +62,7 @@ func testPlayerResults(client *etf2l.Client) func(*testing.T) {
 
 func testPlayerTransfers(client *etf2l.Client) func(*testing.T) {
 	return func(t *testing.T) {
-		results, err := client.PlayerTransfers(context.Background(), testETF2LBannedID, etf2l.BaseOpts{Recursive: false})
+		results, err := client.PlayerTransfers(context.Background(), &http.Client{}, testETF2LBannedID, etf2l.BaseOpts{Recursive: false})
 		require.NoError(t, err)
 		require.Equal(t, 20, len(results))
 	}
@@ -69,7 +70,7 @@ func testPlayerTransfers(client *etf2l.Client) func(*testing.T) {
 
 func testDemos(client *etf2l.Client) func(*testing.T) {
 	return func(t *testing.T) {
-		demos, err := client.Demos(context.Background(), etf2l.DemoOpts{
+		demos, err := client.Demos(context.Background(), &http.Client{}, etf2l.DemoOpts{
 			Recursive: etf2l.BaseOpts{Recursive: false},
 			PlayerID:  "2788",
 		})
@@ -80,7 +81,7 @@ func testDemos(client *etf2l.Client) func(*testing.T) {
 
 func testBans(client *etf2l.Client) func(*testing.T) {
 	return func(t *testing.T) {
-		bans, err := client.Bans(context.Background(), etf2l.BanOpts{
+		bans, err := client.Bans(context.Background(), &http.Client{}, etf2l.BanOpts{
 			Recursive: etf2l.BaseOpts{Recursive: false},
 			PlayerID:  testETF2LBannedID,
 		})
@@ -91,7 +92,7 @@ func testBans(client *etf2l.Client) func(*testing.T) {
 
 func testCompetitionList(client *etf2l.Client) func(*testing.T) {
 	return func(t *testing.T) {
-		competitions, err := client.CompetitionList(context.Background(), etf2l.CompetitionOpts{
+		competitions, err := client.CompetitionList(context.Background(), &http.Client{}, etf2l.CompetitionOpts{
 			Recursive: etf2l.BaseOpts{Recursive: false},
 		})
 		require.NoError(t, err)
@@ -101,7 +102,7 @@ func testCompetitionList(client *etf2l.Client) func(*testing.T) {
 
 func testCompetitionDetails(client *etf2l.Client) func(*testing.T) {
 	return func(t *testing.T) {
-		competition, err := client.CompetitionDetails(context.Background(), 1)
+		competition, err := client.CompetitionDetails(context.Background(), &http.Client{}, 1)
 		require.NoError(t, err)
 		require.Equal(t, 1, competition.ID)
 	}
@@ -109,7 +110,7 @@ func testCompetitionDetails(client *etf2l.Client) func(*testing.T) {
 
 func testCompetitionTeams(client *etf2l.Client) func(*testing.T) {
 	return func(t *testing.T) {
-		teams, err := client.CompetitionTeams(context.Background(), 1, etf2l.BaseOpts{
+		teams, err := client.CompetitionTeams(context.Background(), &http.Client{}, 1, etf2l.BaseOpts{
 			Recursive: false,
 		})
 		require.NoError(t, err)
@@ -119,7 +120,7 @@ func testCompetitionTeams(client *etf2l.Client) func(*testing.T) {
 
 func testCompetitionResults(client *etf2l.Client) func(*testing.T) {
 	return func(t *testing.T) {
-		teams, err := client.CompetitionResults(context.Background(), 1, etf2l.BaseOpts{
+		teams, err := client.CompetitionResults(context.Background(), &http.Client{}, 1, etf2l.BaseOpts{
 			Recursive: false,
 		})
 		require.NoError(t, err)
@@ -129,7 +130,7 @@ func testCompetitionResults(client *etf2l.Client) func(*testing.T) {
 
 func testCompetitionMatches(client *etf2l.Client) func(*testing.T) {
 	return func(t *testing.T) {
-		teams, err := client.CompetitionMatches(context.Background(), 1, etf2l.BaseOpts{
+		teams, err := client.CompetitionMatches(context.Background(), &http.Client{}, 1, etf2l.BaseOpts{
 			Recursive: false,
 		})
 		require.NoError(t, err)
@@ -139,7 +140,7 @@ func testCompetitionMatches(client *etf2l.Client) func(*testing.T) {
 
 func testCompetitionTables(client *etf2l.Client) func(*testing.T) {
 	return func(t *testing.T) {
-		teams, err := client.CompetitionResults(context.Background(), 1, etf2l.BaseOpts{
+		teams, err := client.CompetitionResults(context.Background(), &http.Client{}, 1, etf2l.BaseOpts{
 			Recursive: false,
 		})
 		require.NoError(t, err)
@@ -149,7 +150,7 @@ func testCompetitionTables(client *etf2l.Client) func(*testing.T) {
 
 func testMatches(client *etf2l.Client) func(*testing.T) {
 	return func(t *testing.T) {
-		matches, err := client.Matches(context.Background(), etf2l.MatchesOpts{
+		matches, err := client.Matches(context.Background(), &http.Client{}, etf2l.MatchesOpts{
 			BaseOpts: etf2l.BaseOpts{Recursive: true},
 		})
 		require.NoError(t, err)
@@ -159,7 +160,7 @@ func testMatches(client *etf2l.Client) func(*testing.T) {
 
 func testMatchDetails(client *etf2l.Client) func(*testing.T) {
 	return func(t *testing.T) {
-		match, err := client.MatchDetails(context.Background(), 1)
+		match, err := client.MatchDetails(context.Background(), &http.Client{}, 1)
 		require.NoError(t, err)
 		require.Equal(t, 1, match.ID)
 	}
@@ -167,7 +168,7 @@ func testMatchDetails(client *etf2l.Client) func(*testing.T) {
 
 func testWhitelists(client *etf2l.Client) func(*testing.T) {
 	return func(t *testing.T) {
-		whitelists, err := client.Whitelists(context.Background())
+		whitelists, err := client.Whitelists(context.Background(), &http.Client{})
 		require.NoError(t, err)
 		require.True(t, len(whitelists) > 4)
 	}
@@ -175,7 +176,7 @@ func testWhitelists(client *etf2l.Client) func(*testing.T) {
 
 func testPlayerRecruitment(client *etf2l.Client) func(*testing.T) {
 	return func(t *testing.T) {
-		recruitments, err := client.PlayerRecruitment(context.Background(), etf2l.RecruitmentOpts{
+		recruitments, err := client.PlayerRecruitment(context.Background(), &http.Client{}, etf2l.RecruitmentOpts{
 			BaseOpts: etf2l.BaseOpts{Recursive: false},
 		})
 		require.NoError(t, err)
@@ -185,7 +186,7 @@ func testPlayerRecruitment(client *etf2l.Client) func(*testing.T) {
 
 func testTeamRecruitment(client *etf2l.Client) func(*testing.T) {
 	return func(t *testing.T) {
-		recruitments, err := client.TeamRecruitment(context.Background(), etf2l.RecruitmentOpts{
+		recruitments, err := client.TeamRecruitment(context.Background(), &http.Client{}, etf2l.RecruitmentOpts{
 			BaseOpts: etf2l.BaseOpts{Recursive: false},
 		})
 		require.NoError(t, err)
@@ -195,7 +196,7 @@ func testTeamRecruitment(client *etf2l.Client) func(*testing.T) {
 
 func testTeam(client *etf2l.Client) func(*testing.T) {
 	return func(t *testing.T) {
-		recruitments, err := client.Team(context.Background(), 2)
+		recruitments, err := client.Team(context.Background(), &http.Client{}, 2)
 		require.NoError(t, err)
 		require.Greater(t, len(recruitments.Competitions), 10)
 	}
@@ -203,7 +204,7 @@ func testTeam(client *etf2l.Client) func(*testing.T) {
 
 func testTeamTransfers(client *etf2l.Client) func(*testing.T) {
 	return func(t *testing.T) {
-		transfers, err := client.TeamTransfers(context.Background(), 2, etf2l.BaseOpts{Recursive: false})
+		transfers, err := client.TeamTransfers(context.Background(), &http.Client{}, 2, etf2l.BaseOpts{Recursive: false})
 		require.NoError(t, err)
 		require.Equal(t, 20, len(transfers))
 	}
@@ -211,7 +212,7 @@ func testTeamTransfers(client *etf2l.Client) func(*testing.T) {
 
 func testTeamResults(client *etf2l.Client) func(*testing.T) {
 	return func(t *testing.T) {
-		results, err := client.TeamResults(context.Background(), 2, etf2l.BaseOpts{Recursive: false})
+		results, err := client.TeamResults(context.Background(), &http.Client{}, 2, etf2l.BaseOpts{Recursive: false})
 		require.NoError(t, err)
 		require.Equal(t, 20, len(results))
 	}
@@ -219,7 +220,7 @@ func testTeamResults(client *etf2l.Client) func(*testing.T) {
 
 func testTeamMatches(client *etf2l.Client) func(*testing.T) {
 	return func(t *testing.T) {
-		results, err := client.TeamMatches(context.Background(), 2, etf2l.BaseOpts{Recursive: false})
+		results, err := client.TeamMatches(context.Background(), &http.Client{}, 2, etf2l.BaseOpts{Recursive: false})
 		require.NoError(t, err)
 		require.Equal(t, 20, len(results))
 	}

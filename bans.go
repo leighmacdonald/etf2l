@@ -2,6 +2,7 @@ package etf2l
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/leighmacdonald/steamid/v3/steamid"
 	"github.com/pkg/errors"
@@ -58,14 +59,14 @@ type BanOpts struct {
 	Reason   string `url:"reason,omitempty"` // 'VAC`
 }
 
-func (client *Client) Bans(ctx context.Context, opts BanOpts) ([]Ban, error) {
+func (client *Client) Bans(ctx context.Context, httpClient *http.Client, opts BanOpts) ([]Ban, error) {
 	curPath := "/bans"
 
 	var bans []Ban
 
 	for {
 		var resp bansResponse
-		if err := client.call(ctx, curPath, opts, &resp); err != nil {
+		if err := client.call(ctx, httpClient, curPath, opts, &resp); err != nil {
 			return nil, err
 		}
 

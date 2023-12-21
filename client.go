@@ -20,8 +20,9 @@ const (
 )
 
 var (
-	ErrNotFound = errors.New("Not found (404)")
-	ErrEOF      = errors.New("End of results")
+	ErrNotFound  = errors.New("Not found (404)")
+	ErrEOF       = errors.New("End of results")
+	ErrNoResults = errors.New("no rows in result set")
 )
 
 type Recursive interface {
@@ -67,15 +68,14 @@ func fullURL(path string) string {
 }
 
 type Client struct {
-	*LimiterClient
 	sync.RWMutex
 }
 
 func New() *Client {
-	return &Client{LimiterClient: newHTTPClient()}
+	return &Client{}
 }
 
-func (client *Client) call(ctx context.Context, path string, body any, receiver any) error {
+func (client *Client) call(ctx context.Context, httpClient *http.Client, path string, body any, receiver any) error {
 	client.Lock()
 	defer client.Unlock()
 
@@ -98,7 +98,7 @@ func (client *Client) call(ctx context.Context, path string, body any, receiver 
 	req.Header.Add("Content-Type", `application/json`)
 	req.Header.Add("Accept", "application/json")
 
-	resp, errResp := client.Do(ctx, req)
+	resp, errResp := httpClient.Do(req)
 	if errResp != nil {
 		return errors.Wrap(errResp, "Failed to call endpoint")
 	}

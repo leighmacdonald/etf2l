@@ -2,6 +2,7 @@ package etf2l
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/pkg/errors"
 )
@@ -75,14 +76,14 @@ type RecruitmentOpts struct {
 	User int `url:"user,omitempty"`
 }
 
-func (client *Client) PlayerRecruitment(ctx context.Context, opts RecruitmentOpts) ([]PlayerRecruitment, error) {
+func (client *Client) PlayerRecruitment(ctx context.Context, httpClient *http.Client, opts RecruitmentOpts) ([]PlayerRecruitment, error) {
 	var matches []PlayerRecruitment
 
 	curPath := "/recruitment/players"
 
 	for {
 		var resp playerRecruitmentResp
-		if err := client.call(ctx, curPath, nil, &resp); err != nil {
+		if err := client.call(ctx, httpClient, curPath, nil, &resp); err != nil {
 			return nil, err
 		}
 
@@ -151,14 +152,14 @@ func (resp teamRecruitmentResp) NextURL(r Recursive) (string, error) {
 	return nextPath, nil
 }
 
-func (client *Client) TeamRecruitment(ctx context.Context, opts RecruitmentOpts) ([]TeamRecruitment, error) {
+func (client *Client) TeamRecruitment(ctx context.Context, httpClient *http.Client, opts RecruitmentOpts) ([]TeamRecruitment, error) {
 	var matches []TeamRecruitment
 
 	curPath := "/recruitment/teams"
 
 	for {
 		var resp teamRecruitmentResp
-		if err := client.call(ctx, curPath, nil, &resp); err != nil {
+		if err := client.call(ctx, httpClient, curPath, nil, &resp); err != nil {
 			return nil, err
 		}
 

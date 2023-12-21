@@ -3,6 +3,7 @@ package etf2l
 import (
 	"context"
 	"fmt"
+	"net/http"
 
 	"github.com/pkg/errors"
 )
@@ -83,27 +84,27 @@ func (resp matchesResponse) NextURL(r Recursive) (string, error) {
 
 type MatchesOpts struct {
 	BaseOpts
-	Clan1       int      `url:"clan1,omitempty"`       // Team ID of the blu team.
-	Clan2       int      `url:"clan2,omitempty"`       // Team ID of the red team.
-	Vs          int      `url:"vs,omitempty"`          // Team ID of either team.
+	Clan1       int      `url:"clan1,omitempty"`       // Team TeamID of the blu team.
+	Clan2       int      `url:"clan2,omitempty"`       // Team TeamID of the red team.
+	Vs          int      `url:"vs,omitempty"`          // Team TeamID of either team.
 	Scheduled   int      `url:"scheduled,omitempty"`   // If set to 1, returns matches that have yet to be played. If set to 0, returns matches that are over.
-	Competition int      `url:"competition,omitempty"` // Limit your search to a specific competition. Expects a competition ID.
+	Competition int      `url:"competition,omitempty"` // Limit your search to a specific competition. Expects a competition TeamID.
 	From        int      `url:"from,omitempty"`        // UNIX timestamp that limits results to everything after the timestamp.
 	To          int      `url:"to,omitempty"`          // UNIX timestamp that limits results to everything before the time.
 	Division    string   `url:"division,omitempty"`    // Name of the division in which the competition was played.
 	TeamType    string   `url:"team_type,omitempty"`   // Name of the type of team.
 	Round       string   `url:"round,omitempty"`       // Name of the current round.
-	Players     []string `url:"players,omitempty"`     // A list of ETF2L user ID's. Returns only matches in which any of the provided players participated.
+	Players     []string `url:"players,omitempty"`     // A list of ETF2L user TeamID's. Returns only matches in which any of the provided players participated.
 }
 
-func (client *Client) Matches(ctx context.Context, opts Recursive) ([]Match, error) {
+func (client *Client) Matches(ctx context.Context, httpClient *http.Client, opts Recursive) ([]Match, error) {
 	var matches []Match
 
 	curPath := "/matches"
 
 	for {
 		var resp matchesResponse
-		if err := client.call(ctx, curPath, nil, &resp); err != nil {
+		if err := client.call(ctx, httpClient, curPath, nil, &resp); err != nil {
 			return nil, err
 		}
 
@@ -161,9 +162,9 @@ type matchDetailsResponse struct {
 	Status Status       `json:"status"`
 }
 
-func (client *Client) MatchDetails(ctx context.Context, leagueMatchID int) (*MatchDetails, error) {
+func (client *Client) MatchDetails(ctx context.Context, httpClient *http.Client, leagueMatchID int) (*MatchDetails, error) {
 	var resp matchDetailsResponse
-	if err := client.call(ctx, fmt.Sprintf("/matches/%d", leagueMatchID), nil, &resp); err != nil {
+	if err := client.call(ctx, httpClient, fmt.Sprintf("/matches/%d", leagueMatchID), nil, &resp); err != nil {
 		return nil, err
 	}
 

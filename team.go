@@ -3,6 +3,7 @@ package etf2l
 import (
 	"context"
 	"fmt"
+	"net/http"
 
 	"github.com/pkg/errors"
 )
@@ -47,9 +48,9 @@ type teamResponse struct {
 	Status Status `json:"status"`
 }
 
-func (client *Client) Team(ctx context.Context, teamID int) (*Team, error) {
+func (client *Client) Team(ctx context.Context, httpClient *http.Client, teamID int) (*Team, error) {
 	var resp teamResponse
-	if err := client.call(ctx, fmt.Sprintf("/team/%d", teamID), nil, &resp); err != nil {
+	if err := client.call(ctx, httpClient, fmt.Sprintf("/team/%d", teamID), nil, &resp); err != nil {
 		return nil, err
 	}
 
@@ -100,14 +101,14 @@ func (resp teamTransfersResp) NextURL(r Recursive) (string, error) {
 	return nextPath, nil
 }
 
-func (client *Client) TeamTransfers(ctx context.Context, teamID int, opts Recursive) ([]TeamTransfer, error) {
+func (client *Client) TeamTransfers(ctx context.Context, httpClient *http.Client, teamID int, opts Recursive) ([]TeamTransfer, error) {
 	curPath := fmt.Sprintf("/team/%d/transfers", teamID)
 
 	var transfers []TeamTransfer
 
 	for {
 		var resp teamTransfersResp
-		if err := client.call(ctx, curPath, nil, &resp); err != nil {
+		if err := client.call(ctx, httpClient, curPath, nil, &resp); err != nil {
 			return nil, err
 		}
 
@@ -172,14 +173,14 @@ func (resp pagedTeamResponse) NextURL(r Recursive) (string, error) {
 	return nextPath, nil
 }
 
-func (client *Client) TeamResults(ctx context.Context, teamID int, opts Recursive) ([]TeamResult, error) {
+func (client *Client) TeamResults(ctx context.Context, httpClient *http.Client, teamID int, opts Recursive) ([]TeamResult, error) {
 	curPath := fmt.Sprintf("/team/%d/results", teamID)
 
 	var bans []TeamResult
 
 	for {
 		var resp pagedTeamResponse
-		if err := client.call(ctx, curPath, nil, &resp); err != nil {
+		if err := client.call(ctx, httpClient, curPath, nil, &resp); err != nil {
 			return nil, err
 		}
 
@@ -231,15 +232,15 @@ func (resp teamMatchesResp) NextURL(r Recursive) (string, error) {
 
 type TeamMatchesOpts struct {
 	Recursive
-	// Team ID of the blu team.
+	// Team TeamID of the blu team.
 	Clan1 int `url:"clan1,omitempty"`
-	// Team ID of the red team.
+	// Team TeamID of the red team.
 	Clan2 int `url:"clan2,omitempty"`
-	// Team ID of either team.
+	// Team TeamID of either team.
 	Vs int `url:"vs,omitempty"`
 	// If set to 1, returns matches that have yet to be played. If set to 0, returns matches that are over.
 	Scheduled int `url:"scheduled,omitempty"`
-	// Limit your search to a specific competition. Expects a competition ID.
+	// Limit your search to a specific competition. Expects a competition TeamID.
 	Competition int `url:"competition,omitempty"`
 	// UNIX timestamp that limits results to everything after the timestamp.
 	From int `url:"from,omitempty"`
@@ -251,18 +252,18 @@ type TeamMatchesOpts struct {
 	TeamType string `url:"team_type,omitempty"`
 	// Name of the current round.
 	Round string `url:"round,omitempty"`
-	// A list of ETF2L user ID's. Returns only matches in which any of the provided players participated.
+	// A list of ETF2L user TeamID's. Returns only matches in which any of the provided players participated.
 	Players []int `url:"players,omitempty"`
 }
 
-func (client *Client) TeamMatches(ctx context.Context, teamID int, opts Recursive) ([]TeamResult, error) {
+func (client *Client) TeamMatches(ctx context.Context, httpClient *http.Client, teamID int, opts Recursive) ([]TeamResult, error) {
 	curPath := fmt.Sprintf("/team/%d/results", teamID)
 
 	var bans []TeamResult
 
 	for {
 		var resp teamMatchesResp
-		if err := client.call(ctx, curPath, nil, &resp); err != nil {
+		if err := client.call(ctx, httpClient, curPath, nil, &resp); err != nil {
 			return nil, err
 		}
 
