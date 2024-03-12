@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/leighmacdonald/steamid/v3/steamid"
+	"github.com/leighmacdonald/steamid/v4/steamid"
 	"github.com/pkg/errors"
 )
 
@@ -39,10 +39,10 @@ type SteamGroup struct {
 }
 
 type SteamPlayer struct {
-	Avatar string        `json:"avatar"`
-	ID     steamid.SID   `json:"id"`
-	ID3    steamid.SID3  `json:"id3"`
-	ID64   steamid.SID64 `json:"id64"`
+	Avatar string          `json:"avatar"`
+	ID     steamid.SID     `json:"id"`
+	ID3    steamid.SID3    `json:"id3"`
+	ID64   steamid.SteamID `json:"id64"`
 }
 
 type PlayerTeam struct {

@@ -4,19 +4,19 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/leighmacdonald/steamid/v3/steamid"
+	"github.com/leighmacdonald/steamid/v4/steamid"
 	"github.com/pkg/errors"
 )
 
 type Ban struct {
-	Start     int           `json:"start"`
-	End       int           `json:"end"`
-	Name      string        `json:"name"`
-	Steamid   string        `json:"steamid"`
-	Steamid64 steamid.SID64 `json:"steamid64"`
-	Profile   string        `json:"profile"`
-	Expired   bool          `json:"expired"`
-	Reason    string        `json:"reason"`
+	Start     int             `json:"start"`
+	End       int             `json:"end"`
+	Name      string          `json:"name"`
+	Steamid   string          `json:"steamid"`
+	Steamid64 steamid.SteamID `json:"steamid64"`
+	Profile   string          `json:"profile"`
+	Expired   bool            `json:"expired"`
+	Reason    string          `json:"reason"`
 }
 
 type pagedBans struct {
