@@ -27,6 +27,7 @@ func TestClient(t *testing.T) {
 	t.Run("player_transfers", testPlayerTransfers(client))
 	t.Run("demos", testDemos(client))
 	t.Run("bans", testBans(client))
+	t.Run("bans_recursive", testBansRecursive(client))
 	t.Run("competition_list", testCompetitionList(client))
 	t.Run("competition_details", testCompetitionDetails(client))
 	t.Run("competition_teams", testCompetitionTeams(client))
@@ -90,6 +91,16 @@ func testBans(client *etf2l.Client) func(*testing.T) {
 		})
 		require.NoError(t, err)
 		require.True(t, len(bans) > 2)
+	}
+}
+
+func testBansRecursive(client *etf2l.Client) func(*testing.T) {
+	return func(t *testing.T) {
+		bans, err := client.Bans(context.Background(), &http.Client{}, etf2l.BanOpts{
+			Recursive: etf2l.BaseOpts{Recursive: true},
+		})
+		require.NoError(t, err)
+		require.True(t, len(bans) > 3000)
 	}
 }
 

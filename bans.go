@@ -2,10 +2,15 @@ package etf2l
 
 import (
 	"context"
-	"net/http"
-
+	"errors"
+	"fmt"
 	"github.com/leighmacdonald/steamid/v4/steamid"
-	"github.com/pkg/errors"
+	"log/slog"
+	"net/http"
+	"net/url"
+	"strconv"
+	"strings"
+	"time"
 )
 
 type Ban struct {
@@ -49,6 +54,8 @@ func (resp bansResponse) NextURL(r Recursive) (string, error) {
 		return "", err
 	}
 
+	time.Sleep(time.Second * 1)
+
 	return nextPath, nil
 }
 
@@ -61,17 +68,32 @@ type BanOpts struct {
 
 func (client *Client) Bans(ctx context.Context, httpClient *http.Client, opts BanOpts) ([]Ban, error) {
 	curPath := "/bans"
+	max500s := 15
+	cur500s := 0
 
 	var bans []Ban
 
 	for {
-		// TODO Remove, for some reason this page 500s.
-		if curPath == "https://api-v2.etf2l.org/bans?page=18" {
-			curPath = "https://api-v2.etf2l.org/bans?page=19"
-		}
-
 		var resp bansResponse
 		if err := client.call(ctx, httpClient, curPath, opts, &resp); err != nil {
+			if strings.Contains(err.Error(), "500") {
+				cur500s++
+				if cur500s >= max500s {
+					slog.Info("Too many 500s")
+
+					return nil, err
+				}
+
+				next, errNext := skipURLPage(curPath)
+				if errNext != nil {
+					return nil, errNext
+				}
+
+				curPath = next
+
+				continue
+			}
+
 			return nil, err
 		}
 
@@ -91,4 +113,26 @@ func (client *Client) Bans(ctx context.Context, httpClient *http.Client, opts Ba
 	}
 
 	return bans, nil
+}
+
+var errParseURL = errors.New("could not parse url")
+
+func skipURLPage(path string) (string, error) {
+	u, errParse := url.Parse(path)
+	if errParse != nil {
+		return "", errors.Join(errParse, errParseURL)
+	}
+
+	query := u.Query()
+
+	page, errPage := strconv.Atoi(query.Get("page"))
+	if errPage != nil {
+		return "", errors.Join(errParse, errParseURL)
+	}
+
+	query.Set("page", fmt.Sprintf("%d", page+1))
+
+	u.RawQuery = query.Encode()
+
+	return u.String(), nil
 }
