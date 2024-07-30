@@ -65,6 +65,11 @@ func (client *Client) Bans(ctx context.Context, httpClient *http.Client, opts Ba
 	var bans []Ban
 
 	for {
+		// TODO Remove, for some reason this page 500s.
+		if curPath == "https://api-v2.etf2l.org/bans?page=18" {
+			curPath = "https://api-v2.etf2l.org/bans?page=19"
+		}
+
 		var resp bansResponse
 		if err := client.call(ctx, httpClient, curPath, opts, &resp); err != nil {
 			return nil, err
@@ -73,11 +78,6 @@ func (client *Client) Bans(ctx context.Context, httpClient *http.Client, opts Ba
 		bans = append(bans, resp.Pager.Data...)
 
 		nextURL, err := resp.NextURL(opts)
-
-		// TODO Remove, for some reason this page 500s.
-		if nextURL == "https://api-v2.etf2l.org/bans?page=18" {
-			nextURL = "https://api-v2.etf2l.org/bans?page=19"
-		}
 
 		if err != nil {
 			if errors.Is(err, ErrEOF) {
