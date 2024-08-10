@@ -2,6 +2,7 @@ package etf2l
 
 import (
 	"context"
+
 	"github.com/pkg/errors"
 )
 

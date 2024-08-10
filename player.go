@@ -3,9 +3,10 @@ package etf2l
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
+
 	"github.com/leighmacdonald/steamid/v4/steamid"
-	"github.com/pkg/errors"
 )
 
 type PlayerResponse struct {
@@ -66,10 +67,12 @@ type URLs struct {
 
 type PlayerClasses []string
 
+var errDecode = errors.New("failed to decode json response")
+
 func (f *PlayerClasses) UnmarshalJSON(data []byte) error {
 	var value any
 	if err := json.Unmarshal(data, &value); err != nil {
-		return err
+		return errors.Join(err, errDecode)
 	}
 
 	switch value.(type) {

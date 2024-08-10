@@ -4,12 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/leighmacdonald/steamid/v4/steamid"
 	"log/slog"
 	"net/url"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/leighmacdonald/steamid/v4/steamid"
 )
 
 type Ban struct {
@@ -99,7 +100,6 @@ func (client *Client) Bans(ctx context.Context, httpClient HTTPExecutor, opts Ba
 		bans = append(bans, resp.Pager.Data...)
 
 		nextURL, err := resp.NextURL(opts)
-
 		if err != nil {
 			if errors.Is(err, ErrEOF) {
 				break
@@ -117,12 +117,12 @@ func (client *Client) Bans(ctx context.Context, httpClient HTTPExecutor, opts Ba
 var errParseURL = errors.New("could not parse url")
 
 func skipURLPage(path string) (string, error) {
-	u, errParse := url.Parse(path)
+	parsedURL, errParse := url.Parse(path)
 	if errParse != nil {
 		return "", errors.Join(errParse, errParseURL)
 	}
 
-	query := u.Query()
+	query := parsedURL.Query()
 
 	page, errPage := strconv.Atoi(query.Get("page"))
 	if errPage != nil {
@@ -131,7 +131,7 @@ func skipURLPage(path string) (string, error) {
 
 	query.Set("page", fmt.Sprintf("%d", page+1))
 
-	u.RawQuery = query.Encode()
+	parsedURL.RawQuery = query.Encode()
 
-	return u.String(), nil
+	return parsedURL.String(), nil
 }
