@@ -3,8 +3,6 @@ package etf2l
 import (
 	"context"
 	"fmt"
-	"net/http"
-
 	"github.com/pkg/errors"
 )
 
@@ -97,7 +95,7 @@ type MatchesOpts struct {
 	Players     []string `url:"players,omitempty"`     // A list of ETF2L user TeamID's. Returns only matches in which any of the provided players participated.
 }
 
-func (client *Client) Matches(ctx context.Context, httpClient *http.Client, opts Recursive) ([]Match, error) {
+func (client *Client) Matches(ctx context.Context, httpClient HTTPExecutor, opts Recursive) ([]Match, error) {
 	var matches []Match
 
 	curPath := "/matches"
@@ -162,7 +160,7 @@ type matchDetailsResponse struct {
 	Status Status       `json:"status"`
 }
 
-func (client *Client) MatchDetails(ctx context.Context, httpClient *http.Client, leagueMatchID int) (*MatchDetails, error) {
+func (client *Client) MatchDetails(ctx context.Context, httpClient HTTPExecutor, leagueMatchID int) (*MatchDetails, error) {
 	var resp matchDetailsResponse
 	if err := client.call(ctx, httpClient, fmt.Sprintf("/matches/%d", leagueMatchID), nil, &resp); err != nil {
 		return nil, err

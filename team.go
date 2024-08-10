@@ -3,8 +3,6 @@ package etf2l
 import (
 	"context"
 	"fmt"
-	"net/http"
-
 	"github.com/pkg/errors"
 )
 
@@ -48,7 +46,7 @@ type teamResponse struct {
 	Status Status `json:"status"`
 }
 
-func (client *Client) Team(ctx context.Context, httpClient *http.Client, teamID int) (*Team, error) {
+func (client *Client) Team(ctx context.Context, httpClient HTTPExecutor, teamID int) (*Team, error) {
 	var resp teamResponse
 	if err := client.call(ctx, httpClient, fmt.Sprintf("/team/%d", teamID), nil, &resp); err != nil {
 		return nil, err
@@ -101,7 +99,7 @@ func (resp teamTransfersResp) NextURL(r Recursive) (string, error) {
 	return nextPath, nil
 }
 
-func (client *Client) TeamTransfers(ctx context.Context, httpClient *http.Client, teamID int, opts Recursive) ([]TeamTransfer, error) {
+func (client *Client) TeamTransfers(ctx context.Context, httpClient HTTPExecutor, teamID int, opts Recursive) ([]TeamTransfer, error) {
 	curPath := fmt.Sprintf("/team/%d/transfers", teamID)
 
 	var transfers []TeamTransfer
@@ -173,7 +171,7 @@ func (resp pagedTeamResponse) NextURL(r Recursive) (string, error) {
 	return nextPath, nil
 }
 
-func (client *Client) TeamResults(ctx context.Context, httpClient *http.Client, teamID int, opts Recursive) ([]TeamResult, error) {
+func (client *Client) TeamResults(ctx context.Context, httpClient HTTPExecutor, teamID int, opts Recursive) ([]TeamResult, error) {
 	curPath := fmt.Sprintf("/team/%d/results", teamID)
 
 	var bans []TeamResult
@@ -256,7 +254,7 @@ type TeamMatchesOpts struct {
 	Players []int `url:"players,omitempty"`
 }
 
-func (client *Client) TeamMatches(ctx context.Context, httpClient *http.Client, teamID int, opts Recursive) ([]TeamResult, error) {
+func (client *Client) TeamMatches(ctx context.Context, httpClient HTTPExecutor, teamID int, opts Recursive) ([]TeamResult, error) {
 	curPath := fmt.Sprintf("/team/%d/results", teamID)
 
 	var bans []TeamResult

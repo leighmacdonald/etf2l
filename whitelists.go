@@ -2,7 +2,6 @@ package etf2l
 
 import (
 	"context"
-	"net/http"
 )
 
 type whitelistsResponse struct {
@@ -16,7 +15,7 @@ type Whitelist struct {
 	URL        string `json:"url"`
 }
 
-func (client *Client) Whitelists(ctx context.Context, httpClient *http.Client) (map[string]Whitelist, error) {
+func (client *Client) Whitelists(ctx context.Context, httpClient HTTPExecutor) (map[string]Whitelist, error) {
 	var resp whitelistsResponse
 	if err := client.call(ctx, httpClient, "/whitelists", nil, &resp); err != nil {
 		return nil, err

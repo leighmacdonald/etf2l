@@ -2,7 +2,6 @@ package etf2l
 
 import (
 	"context"
-	"net/http"
 	"net/url"
 
 	"github.com/pkg/errors"
@@ -75,7 +74,7 @@ func getPath(path string) (string, error) {
 	return parsed.Path + "?" + parsed.RawQuery, nil
 }
 
-func (client *Client) Demos(ctx context.Context, httpClient *http.Client, opts Recursive) ([]Demo, error) {
+func (client *Client) Demos(ctx context.Context, httpClient HTTPExecutor, opts Recursive) ([]Demo, error) {
 	var demos []Demo
 
 	curPath := "/demos"

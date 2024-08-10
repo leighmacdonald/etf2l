@@ -3,8 +3,6 @@ package etf2l
 import (
 	"context"
 	"fmt"
-	"net/http"
-
 	"github.com/pkg/errors"
 )
 
@@ -74,7 +72,7 @@ type CompetitionOpts struct {
 	Competition string        `url:"competition,omitempty"`
 }
 
-func (client *Client) CompetitionList(ctx context.Context, httpClient *http.Client, opts Recursive) ([]Competition, error) {
+func (client *Client) CompetitionList(ctx context.Context, httpClient HTTPExecutor, opts Recursive) ([]Competition, error) {
 	var competitions []Competition
 
 	curPath := "/competition/list"
@@ -127,7 +125,7 @@ type competitionDetailsResponse struct {
 	Status      Status             `json:"status"`
 }
 
-func (client *Client) CompetitionDetails(ctx context.Context, httpClient *http.Client, competitionID int) (CompetitionDetails, error) {
+func (client *Client) CompetitionDetails(ctx context.Context, httpClient HTTPExecutor, competitionID int) (CompetitionDetails, error) {
 	var resp competitionDetailsResponse
 	if err := client.call(ctx, httpClient, fmt.Sprintf("/competition/%d", competitionID), nil, &resp); err != nil {
 		return CompetitionDetails{}, err
@@ -179,7 +177,7 @@ func (resp competitionTeamsResponse) NextURL(r Recursive) (string, error) {
 	return nextPath, nil
 }
 
-func (client *Client) CompetitionTeams(ctx context.Context, httpClient *http.Client, competitionID int, opts BaseOpts) ([]CompetitionTeam, error) {
+func (client *Client) CompetitionTeams(ctx context.Context, httpClient HTTPExecutor, competitionID int, opts BaseOpts) ([]CompetitionTeam, error) {
 	var teams []CompetitionTeam
 
 	curPath := fmt.Sprintf("/competition/%d/teams", competitionID)
@@ -276,7 +274,7 @@ func (resp competitionResultsResponse) NextURL(r Recursive) (string, error) {
 	return nextPath, nil
 }
 
-func (client *Client) CompetitionResults(ctx context.Context, httpClient *http.Client, competitionID int, opts Recursive) ([]CompetitionResult, error) {
+func (client *Client) CompetitionResults(ctx context.Context, httpClient HTTPExecutor, competitionID int, opts Recursive) ([]CompetitionResult, error) {
 	var results []CompetitionResult
 
 	curPath := fmt.Sprintf("/competition/%d/results", competitionID)
@@ -378,7 +376,7 @@ func (resp competitionMatchesResponse) NextURL(r Recursive) (string, error) {
 	return nextPath, nil
 }
 
-func (client *Client) CompetitionMatches(ctx context.Context, httpClient *http.Client, competitionID int, opts Recursive) ([]CompetitionMatch, error) {
+func (client *Client) CompetitionMatches(ctx context.Context, httpClient HTTPExecutor, competitionID int, opts Recursive) ([]CompetitionMatch, error) {
 	var matches []CompetitionMatch
 
 	curPath := fmt.Sprintf("/competition/%d/matches", competitionID)
@@ -430,7 +428,7 @@ type TablesResponse struct {
 	Tables map[string]CompetitionTable
 }
 
-func (client *Client) CompetitionTables(ctx context.Context, httpClient *http.Client, competitionID int) (map[string]CompetitionTable, error) {
+func (client *Client) CompetitionTables(ctx context.Context, httpClient HTTPExecutor, competitionID int) (map[string]CompetitionTable, error) {
 	var resp TablesResponse
 	if err := client.call(ctx, httpClient, fmt.Sprintf("/competition/%d/tables", competitionID), nil, &resp); err != nil {
 		return nil, err

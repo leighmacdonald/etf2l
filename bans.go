@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/leighmacdonald/steamid/v4/steamid"
 	"log/slog"
-	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
@@ -66,7 +65,7 @@ type BanOpts struct {
 	Reason   string `url:"reason,omitempty"` // 'VAC`
 }
 
-func (client *Client) Bans(ctx context.Context, httpClient *http.Client, opts BanOpts) ([]Ban, error) {
+func (client *Client) Bans(ctx context.Context, httpClient HTTPExecutor, opts BanOpts) ([]Ban, error) {
 	curPath := "/bans"
 	max500s := 15
 	cur500s := 0

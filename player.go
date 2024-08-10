@@ -4,8 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"net/http"
-
 	"github.com/leighmacdonald/steamid/v4/steamid"
 	"github.com/pkg/errors"
 )
@@ -101,7 +99,7 @@ type Player struct {
 	} `json:"urls"`
 }
 
-func (client *Client) Player(ctx context.Context, httpClient *http.Client, playerID string) (*Player, error) {
+func (client *Client) Player(ctx context.Context, httpClient HTTPExecutor, playerID string) (*Player, error) {
 	var resp PlayerResponse
 	if err := client.call(ctx, httpClient, fmt.Sprintf("/player/%s", playerID), nil, &resp); err != nil {
 		return nil, err
@@ -189,7 +187,7 @@ func (opts BaseOpts) IsRecursive() bool {
 	return opts.Recursive
 }
 
-func (client *Client) PlayerResults(ctx context.Context, httpClient *http.Client, playerID string, opts Recursive) ([]PlayerResult, error) {
+func (client *Client) PlayerResults(ctx context.Context, httpClient HTTPExecutor, playerID string, opts Recursive) ([]PlayerResult, error) {
 	var results []PlayerResult
 
 	curPath := fmt.Sprintf("/player/%s/results", playerID)
@@ -275,7 +273,7 @@ func (resp playerTransfersResp) NextURL(r Recursive) (string, error) {
 	return nextPath, nil
 }
 
-func (client *Client) PlayerTransfers(ctx context.Context, httpClient *http.Client, playerID int, opts BaseOpts) ([]PlayerTransfer, error) {
+func (client *Client) PlayerTransfers(ctx context.Context, httpClient HTTPExecutor, playerID int, opts BaseOpts) ([]PlayerTransfer, error) {
 	curPath := fmt.Sprintf("/player/%d/transfers", playerID)
 
 	var transfers []PlayerTransfer
