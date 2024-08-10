@@ -43,8 +43,8 @@ type LimiterClient struct {
 	*rate.Limiter
 }
 
-func (c *LimiterClient) Do(ctx context.Context, req *http.Request) (*http.Response, error) {
-	if errWait := c.Wait(ctx); errWait != nil {
+func (c *LimiterClient) Do(req *http.Request) (*http.Response, error) {
+	if errWait := c.Wait(req.Context()); errWait != nil {
 		return nil, errors.Wrap(errWait, "Failed to wait for request")
 	}
 
@@ -75,7 +75,11 @@ func New() *Client {
 	return &Client{}
 }
 
-func (client *Client) call(ctx context.Context, httpClient *http.Client, path string, body any, receiver any) error {
+type HTTPExecutor interface {
+	Do(req *http.Request) (*http.Response, error)
+}
+
+func (client *Client) call(ctx context.Context, httpClient HTTPExecutor, path string, body any, receiver any) error {
 	client.Lock()
 	defer client.Unlock()
 
