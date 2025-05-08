@@ -83,7 +83,7 @@ func (client *Client) call(ctx context.Context, httpClient HTTPExecutor, path st
 		return errors.New("Rate limited")
 	}
 
-	if !(resp.StatusCode >= http.StatusOK && resp.StatusCode <= http.StatusIMUsed) {
+	if resp.StatusCode != http.StatusOK && resp.StatusCode > http.StatusIMUsed {
 		if resp.StatusCode == http.StatusNotFound {
 			return ErrNotFound
 		}

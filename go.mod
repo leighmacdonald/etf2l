@@ -1,14 +1,13 @@
 module github.com/leighmacdonald/etf2l
 
-go 1.22
+go 1.24
 
-toolchain go1.22.0
+toolchain go1.24.0
 
 require (
-	github.com/leighmacdonald/steamid/v4 v4.0.0
+	github.com/leighmacdonald/steamid/v4 v4.0.4
 	github.com/pkg/errors v0.9.1
-	github.com/stretchr/testify v1.9.0
-	golang.org/x/time v0.5.0
+	github.com/stretchr/testify v1.10.0
 )
 
 require (

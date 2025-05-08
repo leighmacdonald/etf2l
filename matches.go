@@ -96,7 +96,7 @@ type MatchesOpts struct {
 	Players     []string `url:"players,omitempty"`     // A list of ETF2L user TeamID's. Returns only matches in which any of the provided players participated.
 }
 
-func (client *Client) Matches(ctx context.Context, httpClient HTTPExecutor, opts Recursive) ([]Match, error) {
+func (client *Client) Matches(ctx context.Context, httpClient HTTPExecutor, opts Recursive) ([]Match, int, error) {
 	var (
 		matches []Match
 		total   int
@@ -109,6 +109,7 @@ func (client *Client) Matches(ctx context.Context, httpClient HTTPExecutor, opts
 		if errResp != nil {
 			return nil, 0, errResp
 		}
+
 		total += resp.Pager.Total
 
 		matches = append(matches, resp.Pager.Data...)
@@ -128,7 +129,7 @@ func (client *Client) Matches(ctx context.Context, httpClient HTTPExecutor, opts
 	return matches, total, nil
 }
 
-func (client *Client) MatchesPage(ctx context.Context, httpClient *http.Client, page int, limit int) (*MatchesResponse, error) {
+func (client *Client) MatchesPage(ctx context.Context, httpClient HTTPExecutor, page int, limit int) (*MatchesResponse, error) {
 	if limit > 2000 {
 		return nil, errors.New("limit too big. max 2000")
 	}

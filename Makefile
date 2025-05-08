@@ -20,7 +20,7 @@ test:
 check_deps:
 	go install github.com/daixiang0/gci@latest
 	go install mvdan.cc/gofumpt@latest
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.55.2
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint/v2
 	go install honnef.co/go/tools/cmd/staticcheck@latest
 
 check:
