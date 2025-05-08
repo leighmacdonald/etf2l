@@ -63,12 +63,12 @@ type pagedMatches struct {
 	Total        int     `json:"total"`
 }
 
-type matchesResponse struct {
+type MatchesResponse struct {
 	Pager  pagedMatches `json:"results"`
 	Status Status       `json:"status"`
 }
 
-func (resp matchesResponse) NextURL(r Recursive) (string, error) {
+func (resp MatchesResponse) NextURL(r Recursive) (string, error) {
 	if !r.IsRecursive() || resp.Pager.NextPageURL == nil {
 		return "", ErrEOF
 	}
@@ -97,31 +97,48 @@ type MatchesOpts struct {
 }
 
 func (client *Client) Matches(ctx context.Context, httpClient HTTPExecutor, opts Recursive) ([]Match, error) {
-	var matches []Match
+	var (
+		matches []Match
+		total   int
+	)
 
-	curPath := "/matches"
+	curPage := 0
 
 	for {
-		var resp matchesResponse
-		if err := client.call(ctx, httpClient, curPath, nil, &resp); err != nil {
-			return nil, err
+		resp, errResp := client.MatchesPage(ctx, httpClient, curPage, 2000)
+		if errResp != nil {
+			return nil, 0, errResp
 		}
+		total += resp.Pager.Total
 
 		matches = append(matches, resp.Pager.Data...)
 
-		nextURL, err := resp.NextURL(opts)
+		_, err := resp.NextURL(opts)
 		if err != nil {
 			if errors.Is(err, ErrEOF) {
 				break
 			}
 
-			return nil, err
+			return nil, 0, err
 		}
 
-		curPath = nextURL
+		curPage++
 	}
 
-	return matches, nil
+	return matches, total, nil
+}
+
+func (client *Client) MatchesPage(ctx context.Context, httpClient *http.Client, page int, limit int) (*MatchesResponse, error) {
+	if limit > 2000 {
+		return nil, errors.New("limit too big. max 2000")
+	}
+
+	var resp MatchesResponse
+	if err := client.call(ctx, httpClient, fmt.Sprintf("/matches?page=%d&limit=%d", page, limit), nil, &resp); err != nil {
+		return nil, err
+	}
+
+	return &resp, nil
 }
 
 type MatchMapResult struct {
